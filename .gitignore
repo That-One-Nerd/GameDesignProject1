@@ -1,0 +1,29 @@
+# Weird Unity stuff.
+.vs/
+obj/
+
+Build/
+Library/
+Logs/
+Temp/
+UserSettings/
+
+MemoryCaptures/
+Recordings/
+
+# Visual Studio files that are regenerated.
+.vsconfig
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
