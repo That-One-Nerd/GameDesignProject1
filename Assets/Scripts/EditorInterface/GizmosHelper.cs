@@ -2,11 +2,7 @@ using UnityEngine;
 
 public static class GizmosHelper
 {
-    public static void DrawLine(Transform transform, Vector3 from, Vector3 to) => DrawPoints(transform, new Vector3[2]
-    {
-        from,
-        to
-    });
+    public static void DrawLine(Transform transform, Vector3 from, Vector3 to) => DrawPoints(transform, new Vector3[2] { from, to });
     public static void DrawPoints(Transform transform, Vector3[] points)
     {
         // Apply rotation and position.

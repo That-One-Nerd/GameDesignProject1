@@ -266,8 +266,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DungeonRoot: {fileID: 754085558}
-  StartingRoomId: debug.test1
-  RoomCountRange: {x: 20, y: 50}
+  RoomCountRange: {x: 20, y: 100}
+  StartingRoom: {fileID: 2101345830686511701, guid: e460ac35ac4587e498e7133f9e3962cf, type: 3}
 --- !u!4 &1726388858
 Transform:
   m_ObjectHideFlags: 0

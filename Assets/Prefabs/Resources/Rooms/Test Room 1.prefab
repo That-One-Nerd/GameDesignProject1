@@ -1,5 +1,60 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &985905253171367612
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 249722007521576760}
+  - component: {fileID: 5053339003064248858}
+  m_Layer: 0
+  m_Name: Door U
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &249722007521576760
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985905253171367612}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
+  m_LocalPosition: {x: 0, y: 4.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2101345830686511700}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!114 &5053339003064248858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 985905253171367612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ab941518ca8a4642828187df902b1e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AssignWeight: 1
+  Match: {fileID: 0}
+  Disabled: 0
+  Tags:
+  - test.up
+  AllowedMatches:
+  - Tag: test.down
+    Weight: 1
+  - Tag: test.hallway
+    Weight: 1
+  - Tag: test.diag
+    Weight: 1
 --- !u!1 &1513129216089456175
 GameObject:
   m_ObjectHideFlags: 0
@@ -25,11 +80,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1513129216089456175}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalPosition: {x: 0, y: -4.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2101345830686511700}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2357044271177384697
 MonoBehaviour:
@@ -43,7 +98,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab941518ca8a4642828187df902b1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: vertical
+  AssignWeight: 1
+  Match: {fileID: 0}
+  Disabled: 0
+  Tags:
+  - test.down
+  AllowedMatches:
+  - Tag: test.up
+    Weight: 1
+  - Tag: test.hallway
+    Weight: 1
+  - Tag: test.diag
+    Weight: 1
 --- !u!1 &1912872275816598801
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,11 +135,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1912872275816598801}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 5, y: -0.0000011920928, z: 0}
+  m_LocalPosition: {x: 5.25, y: -0.0000011622905, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2101345830686511700}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!114 &1012738459284175318
 MonoBehaviour:
@@ -87,7 +153,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab941518ca8a4642828187df902b1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: horizontal
+  AssignWeight: 1
+  Match: {fileID: 0}
+  Disabled: 0
+  Tags:
+  - test.right
+  AllowedMatches:
+  - Tag: test.left
+    Weight: 1
+  - Tag: test.hallway
+    Weight: 1
+  - Tag: test.diag
+    Weight: 1
 --- !u!1 &2101345829801090270
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,11 +190,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2101345829801090270}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -5, y: 0, z: 0}
+  m_LocalPosition: {x: -5.25, y: 0.000000029802319, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2101345830686511700}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
 --- !u!114 &2101345829801090271
 MonoBehaviour:
@@ -131,7 +208,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ab941518ca8a4642828187df902b1e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tag: horizontal
+  AssignWeight: 1
+  Match: {fileID: 0}
+  Disabled: 0
+  Tags:
+  - test.left
+  AllowedMatches:
+  - Tag: test.right
+    Weight: 1
+  - Tag: test.hallway
+    Weight: 1
+  - Tag: test.diag
+    Weight: 1
 --- !u!1 &2101345830686511723
 GameObject:
   m_ObjectHideFlags: 0
@@ -143,7 +231,7 @@ GameObject:
   - component: {fileID: 2101345830686511700}
   - component: {fileID: 2101345830686511701}
   m_Layer: 0
-  m_Name: debug.test1
+  m_Name: Test Room 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -160,10 +248,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 7175683798590047672}
   - {fileID: 422348202299819723}
   - {fileID: 2101345829801090264}
   - {fileID: 646947909993633888}
+  - {fileID: 249722007521576760}
+  - {fileID: 7244937749187678482}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -179,16 +268,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6268a80b1893dea4da88a977847d0df1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Identifier: debug.test1
   Bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 5, y: 4, z: 0}
+  - {fileID: 8002291388036001699}
   Doors:
-  - {fileID: 5516082331950511926}
   - {fileID: 2357044271177384697}
   - {fileID: 2101345829801090271}
   - {fileID: 1012738459284175318}
---- !u!1 &9158382049854172236
+  - {fileID: 5053339003064248858}
+  Weight: 1
+  CanBeRotated: 1
+--- !u!1 &5483700677498732059
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,39 +285,52 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7175683798590047672}
-  - component: {fileID: 5516082331950511926}
-  m_Layer: 0
-  m_Name: Door U
-  m_TagString: Untagged
+  - component: {fileID: 7244937749187678482}
+  - component: {fileID: 8002291388036001699}
+  m_Layer: 6
+  m_Name: Bounds
+  m_TagString: RoomBounds
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7175683798590047672
+--- !u!4 &7244937749187678482
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9158382049854172236}
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: 0, y: 4, z: 0}
+  m_GameObject: {fileID: 5483700677498732059}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2101345830686511700}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
---- !u!114 &5516082331950511926
-MonoBehaviour:
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &8002291388036001699
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9158382049854172236}
+  m_GameObject: {fileID: 5483700677498732059}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ab941518ca8a4642828187df902b1e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Tag: vertical
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 10, y: 8}
+  m_EdgeRadius: 0

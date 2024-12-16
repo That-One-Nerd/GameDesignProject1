@@ -3,11 +3,11 @@ using UnityEngine;
 [ExecuteAlways]
 public abstract class RoomItem : MonoBehaviour
 {
-    public RoomObject Room { get; private set; }
+    public RoomObject ParentRoom { get; private set; }
 
     private void Awake()
     {
-        Room = GetComponentInParent<RoomObject>();
+        ParentRoom = GetComponentInParent<RoomObject>();
     }
 
     private void Update()
@@ -21,7 +21,7 @@ public abstract class RoomItem : MonoBehaviour
     private void EditorUpdate()
     {
         Awake();
-        if (Room == null)
+        if (ParentRoom == null)
         {
             Debug.LogError("A room item must have a parent room.");
             return;
@@ -30,6 +30,6 @@ public abstract class RoomItem : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
-        Room.OnDrawGizmosSelected();
+        ParentRoom.OnDrawGizmosSelected();
     }
 }
