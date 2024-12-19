@@ -44,6 +44,13 @@ public class RoomObject : MonoBehaviour
         Awake();
     }
 
+    public Bounds GetFullBounds()
+    {
+        Bounds result = new Bounds(transform.position, Vector2.zero);
+        foreach (Collider2D col in Bounds) result.Encapsulate(col.bounds);
+        return result;
+    }
+
     internal void OnDrawGizmos()
     {
         // Draw room mesh.

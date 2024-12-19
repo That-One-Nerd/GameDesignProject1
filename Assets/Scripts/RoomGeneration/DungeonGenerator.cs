@@ -1,12 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DungeonGenerator : Singleton<DungeonGenerator>
 {
+    public RoomObject DungeonStartingRoom { get; private set; }
+
+    [Header("Generation")]
     public Transform DungeonRoot;
     public Vector2Int RoomCountRange;
-    public RoomObject StartingRoom;
+    public RoomObject StartingRoomPrefab;
+
+    [Header("Callbacks")]
+    public UnityEvent OnDungeonRegenerated;
 
     private RoomObject[] possibleRooms;
 
@@ -38,9 +45,10 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
         List<RoomDoor> unassignedDoors = new List<RoomDoor>();
 
         // Pick random starting room.
-        RoomObject startingRoom = Instantiate(StartingRoom, DungeonRoot);
+        RoomObject startingRoom = Instantiate(StartingRoomPrefab, DungeonRoot);
         addedRooms.Add(startingRoom);
         unassignedDoors.AddRange(startingRoom.Doors);
+        DungeonStartingRoom = startingRoom;
 
         while (rooms > 0 && unassignedDoors.Count > 0)
         {
@@ -117,6 +125,8 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
 
             // Pick a random door in this room that fits the tag.
             RoomObject chosenRoomClone = Instantiate(chosenRoom, DungeonRoot);
+            chosenRoomClone.gameObject.SetActive(false);
+            chosenRoomClone.name = $"Room {addedRooms.Count}"; //  - {chosenRoom.name}"
             List<RoomDoor> tempDoors = new List<RoomDoor>(chosenRoomClone.Doors);
         _retryOtherDoor:
             RoomDoor[] otherDoors = tempDoors.Where(x => chosenDoor.AllowedMatches.Any(y => x.Tags.Any(z => z == y.Tag))).ToArray();
@@ -171,9 +181,27 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
             Vector3 curDoorPos = otherDoor.transform.position;
             Vector3 diffPos = expectedDoorPos - curDoorPos;
             chosenRoomClone.transform.position += diffPos;
+            Physics2D.SyncTransforms();
 
             // See if this specific transform of the room causes it to overlap with
             // any other room.
+            for (int i = 0; i < chosenRoomClone.Bounds.Length; i++)
+            {
+                Collider2D toCheck = chosenRoomClone.Bounds[i];
+                List<Collider2D> hits = new List<Collider2D>();
+
+                ContactFilter2D filter = new ContactFilter2D();
+                filter.NoFilter();
+
+                toCheck.OverlapCollider(filter, hits);
+                hits = hits.Where(x => !chosenRoomClone.Bounds.Contains(x)).ToList();
+                if (hits.Count > 0)
+                {
+                    // Overlapping another room, try a different orientation.
+                    tempDoors.Remove(otherDoor);
+                    goto _retryOtherDoor;
+                }
+            }
 
             // Extra stuff.
             chosenDoor.Match = otherDoor;
@@ -193,5 +221,8 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
 
         // Make all remaining unavailable doors disabled.
         foreach (RoomDoor door in unassignedDoors) door.Disabled = true;
+
+        // Dungeon completed, invoke callback.
+        OnDungeonRegenerated.Invoke();
     }
 }
