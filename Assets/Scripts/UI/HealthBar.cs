@@ -8,9 +8,10 @@ public class HealthBar : MonoBehaviour
 
     private RectTransform rectTransform;
 
-    private RectTransform bar;
+    private RectTransform mainBar;
     private TextMeshProUGUI text;
     private List<RectTransform> bars;
+    private RectTransform border;
 
     private PlayerController player;
 
@@ -18,7 +19,7 @@ public class HealthBar : MonoBehaviour
     {
         rectTransform = GetComponent<RectTransform>();
 
-        bar = transform.Find("Range").GetComponent<RectTransform>();
+        mainBar = transform.Find("Range").GetComponent<RectTransform>();
         bars = new List<RectTransform>();
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -26,10 +27,11 @@ public class HealthBar : MonoBehaviour
             if (child.name.StartsWith("Overheal ")) bars.Add(child.GetComponent<RectTransform>());
         }
         bars.Sort((a, b) => int.Parse(a.name.Substring(9)).CompareTo(int.Parse(b.name.Substring(9))));
-        bars.Insert(0, bar);
+        bars.Insert(0, mainBar);
 
         player = FindObjectOfType<PlayerController>();
-        text = bar.Find("Display").GetComponent<TextMeshProUGUI>();
+        text = mainBar.Find("Display").GetComponent<TextMeshProUGUI>();
+        border = transform.Find("Border").GetComponent<RectTransform>();
 
         Tick(true);
     }
@@ -41,11 +43,13 @@ public class HealthBar : MonoBehaviour
         float size = Mathf.Log10(player.BaseStats.MaxHealth) * ScalingFactor;
         float desiredHealth = player.CurrentHealth;
         float ratio = desiredHealth / player.BaseStats.MaxHealth;
+        float borderSize = 4 + 2 * Mathf.Max(0, Mathf.Ceil(ratio - 1));
 
         if (!instant)
         {
             desiredHealth = Mathf.Lerp(prevHealth, desiredHealth, Time.deltaTime * 5);
             ratio = desiredHealth / player.BaseStats.MaxHealth;
+            borderSize = Mathf.Lerp(border.sizeDelta.y, 4 + 2 * Mathf.Max(0, Mathf.Ceil(ratio - 1)), Time.deltaTime * 20);
         }
 
         for (int i = 0; i < bars.Count; i++)
@@ -58,6 +62,9 @@ public class HealthBar : MonoBehaviour
             ratio--;
         }
         text.text = Mathf.RoundToInt(desiredHealth).ToString();
+
+        border.sizeDelta = new Vector2(border.sizeDelta.x, borderSize);
+        border.localPosition = new Vector2(border.localPosition.x, -2 - borderSize / 2);
 
         prevHealth = desiredHealth;
     }
