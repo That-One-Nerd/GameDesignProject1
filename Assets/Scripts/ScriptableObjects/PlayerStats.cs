@@ -4,4 +4,9 @@ using UnityEngine;
 public class PlayerStats : ScriptableObject
 {
     public int MaxHealth;
+
+    public void Reset()
+    {
+        MaxHealth = 100;
+    }
 }

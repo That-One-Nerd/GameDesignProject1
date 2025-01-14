@@ -41,7 +41,7 @@ public class ItemGameObject : MonoBehaviour
 
         Vector2 diff = player.transform.position - transform.position;
         float diffMagSqr = diff.x * diff.x + diff.y * diff.y;
-        if (!Collected && diffMagSqr <= pickupDistSqr)
+        if (!Collected && diffMagSqr <= pickupDistSqr && player.Active)
         {
             if (!lastCouldPickup) OnEnterPickupRange();
             OnStayPickupRange();

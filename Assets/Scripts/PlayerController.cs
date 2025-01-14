@@ -1,4 +1,8 @@
+using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -37,6 +41,11 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
 
         generator.OnDungeonRegenerated.AddListener(OnDungeonGenerated);
+
+        BaseStats.Reset();
+        Inventory.Reset();
+
+        CurrentHealth = 300;
     }
 
     private void OnDungeonGenerated()
@@ -48,8 +57,52 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         MovementTick();
-        OverhealTick();
+        //OverhealTick();
         InventoryTick();
+
+        TempDeathTick();
+    }
+
+    private bool ready = false;
+    private void TempDeathTick()
+    {
+        if (Room != DungeonGenerator.Instance.DungeonStartingRoom) ready = true;
+        if (!ready) return;
+
+        if (CurrentHealth > 1)
+        {
+            while (overhealTimer < 0)
+            {
+                CurrentHealth--;
+                overhealTimer += Mathf.Max(0.002f * CurrentHealth, Time.deltaTime * 1.001f);
+            }
+            overhealTimer -= Time.deltaTime;
+        }
+        else
+        {
+            // Janky ahh code. It works for now though.
+            CurrentHealth = 0;
+            Active = false;
+            GetComponent<SpriteRenderer>().enabled = false;
+            FindObjectOfType<InventoryDisplay>()?.RefreshInventory();
+            Destroy(FindObjectOfType<InventoryDisplay>());
+            int count = (from slot in Inventory.ItemSlots select slot.Count).Sum();
+            GameObject.Find("Heads Up Display").transform.Find("Inventory").GetComponent<RawImage>().enabled = true;
+            GameObject.Find("Heads Up Display").transform.Find("Inventory").Find("Slots").gameObject.SetActive(true);
+            GameObject.Find("Heads Up Display").transform.Find("Finish Text").GetComponent<TextMeshProUGUI>().text =
+                $"You collected a total of {count} items!\n" +
+                 "Press [R] to retry or to challenge a friend!";
+            GameObject.Find("Heads Up Display").transform.Find("Finish Text").gameObject.SetActive(true);
+            overhealTimer = 1;
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Destroy(GameObject.Find("Heads Up Display"));
+                Destroy(GameObject.Find("Dungeon Root"));
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                return;
+            }
+        }
     }
 
     private void MovementTick()
