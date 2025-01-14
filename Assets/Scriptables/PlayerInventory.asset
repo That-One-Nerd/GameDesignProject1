@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51a0c90199131db459c8aae050b6f2c7, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  MaxSpace: 2
+  MaxSpace: 25
   ItemSlots: []

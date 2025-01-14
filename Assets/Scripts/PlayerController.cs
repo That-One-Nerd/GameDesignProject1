@@ -17,8 +17,12 @@ public class PlayerController : MonoBehaviour
     public float OverhealDegradation;
     public float OverhealAcceleration;
 
+    [Header("Animations")]
+    public float AnimationSpeed;
+
     private float overhealTimer;
 
+    private Animator anim;
     private CameraController cam;
     private DungeonGenerator generator;
     private Rigidbody2D rb;
@@ -27,6 +31,7 @@ public class PlayerController : MonoBehaviour
     {
         Active = true;
 
+        anim = GetComponent<Animator>();
         cam = FindObjectOfType<CameraController>();
         generator = FindObjectOfType<DungeonGenerator>();
         rb = GetComponent<Rigidbody2D>();
@@ -44,6 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         MovementTick();
         OverhealTick();
+        InventoryTick();
     }
 
     private void MovementTick()
@@ -57,6 +63,14 @@ public class PlayerController : MonoBehaviour
         Vector2 axis = new Vector2(Input.GetAxisRaw("Horizontal"),
                                    Input.GetAxisRaw("Vertical"));
         rb.velocity = Vector2.ClampMagnitude(axis, 1) * Speed;
+
+        float mag = axis.magnitude;
+        if (mag > 0.1)
+        {
+            anim.SetInteger("State", 1);
+            anim.SetFloat("Speed", mag * AnimationSpeed);
+        }
+        else anim.SetInteger("State", 0);
     }
     private void OverhealTick()
     {
@@ -65,6 +79,7 @@ public class PlayerController : MonoBehaviour
             while (overhealTimer < 0)
             {
                 CurrentHealth--;
+                FindObjectOfType<HealthBar>().DecreaseCurrentHealthBefore();
                 overhealTimer += 1 / (OverhealDegradation + OverhealAcceleration * (CurrentHealth - BaseStats.MaxHealth));
             }
             overhealTimer -= Time.deltaTime;
@@ -72,6 +87,15 @@ public class PlayerController : MonoBehaviour
         else
         {
             overhealTimer = 1;
+        }
+    }
+    private void InventoryTick()
+    {
+        for (int i = 0; i < Inventory.ItemSlots.Count; i++)
+        {
+            ItemSlot slot = Inventory.ItemSlots[i];
+            if (slot.Item == null) continue;
+            slot.Item.OnInventoryTick();
         }
     }
 

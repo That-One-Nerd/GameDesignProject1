@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[ExecuteAlways]
 public class ItemGameObject : MonoBehaviour
 {
     public float PickupDistance = 1.5f;
@@ -8,14 +9,18 @@ public class ItemGameObject : MonoBehaviour
 
     public bool Collected { get; protected set; }
 
+    private Collider2D col;
     private PlayerController player;
+    private Rigidbody2D rb;
     private SpriteRenderer sr;
 
     private Vector2 initialSize;
 
     private void Awake()
     {
+        col = GetComponent<Collider2D>();
         player = FindObjectOfType<PlayerController>();
+        rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
 
         initialSize = transform.localScale;
@@ -25,6 +30,13 @@ public class ItemGameObject : MonoBehaviour
 
     private void Update()
     {
+        if (!Application.isPlaying)
+        {
+            Awake();
+            sr.sprite = ItemData.Sprite;
+            return;
+        }
+
         float desiredSize, pickupDistSqr = PickupDistance * PickupDistance;
 
         Vector2 diff = player.transform.position - transform.position;
@@ -55,7 +67,8 @@ public class ItemGameObject : MonoBehaviour
         }
 
         transform.localScale = Vector2.Lerp(transform.localScale, initialSize * desiredSize, Time.deltaTime * 15);
-    
+
+        if (col != null) col.enabled = !Collected;
         if (Collected)
         {
             Vector3 playerPos = player.transform.position, curPos = transform.position;
@@ -73,12 +86,22 @@ public class ItemGameObject : MonoBehaviour
         }
     }
 
+    public void GiveRandomVelocity(float max = 10)
+    {
+        if (rb == null) return;
+
+        Vector2 dir = Random.insideUnitCircle;
+        rb.velocity = dir * max;
+    }
+
+    public virtual void OnDrop() { }
     protected virtual void OnEnterPickupRange() { }
     protected virtual void OnStayPickupRange() { }
     protected virtual void OnExitPickupRange() { }
     protected virtual void OnPickup()
     {
         Collected = true;
+        ItemData.OnPickup();
     }
     protected virtual void OnPickupFailed() { }
 }
