@@ -5,12 +5,12 @@ public abstract class RoomItem : MonoBehaviour
 {
     public RoomObject ParentRoom { get; private set; }
 
-    private void Awake()
+    protected virtual void Awake()
     {
         ParentRoom = GetComponentInParent<RoomObject>();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (!Application.isPlaying)
         {
@@ -18,9 +18,8 @@ public abstract class RoomItem : MonoBehaviour
             return;
         }
     }
-    private void EditorUpdate()
+    protected virtual void EditorUpdate()
     {
-        Awake();
         if (ParentRoom == null)
         {
             Debug.LogError("A room item must have a parent room.");
@@ -28,8 +27,8 @@ public abstract class RoomItem : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmosSelected()
+    protected virtual void OnDrawGizmosSelected()
     {
-        ParentRoom.OnDrawGizmosSelected();
+        if (ParentRoom != null) ParentRoom.OnDrawGizmosSelected();
     }
 }

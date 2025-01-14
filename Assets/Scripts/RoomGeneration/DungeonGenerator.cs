@@ -11,6 +11,7 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
     public Transform DungeonRoot;
     public Vector2Int RoomCountRange;
     public RoomObject StartingRoomPrefab;
+    public int MaxRetries;
 
     [Header("Callbacks")]
     public UnityEvent OnDungeonRegenerated;
@@ -26,18 +27,21 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Application.isEditor && Input.GetKeyDown(KeyCode.Return))
         {
-            foreach (Transform child in DungeonRoot.transform)
-            {
-                Destroy(child.gameObject);
-            }
             MakeDungeon();
         }
     }
 
-    public void MakeDungeon()
+    public void MakeDungeon() => MakeDungeon(MaxRetries);
+    private void MakeDungeon(int retries)
     {
+        // Delete previous rooms.
+        foreach (Transform child in DungeonRoot)
+        {
+            Destroy(child.gameObject);
+        }
+
         int rooms = Random.Range(RoomCountRange.x, RoomCountRange.y + 1);
         Debug.Log($"Attempting to generate {rooms} rooms.");
 
@@ -49,6 +53,8 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
         addedRooms.Add(startingRoom);
         unassignedDoors.AddRange(startingRoom.Doors);
         DungeonStartingRoom = startingRoom;
+
+        List<Collider2D> hitBuffer = new List<Collider2D>();
 
         while (rooms > 0 && unassignedDoors.Count > 0)
         {
@@ -125,7 +131,6 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
 
             // Pick a random door in this room that fits the tag.
             RoomObject chosenRoomClone = Instantiate(chosenRoom, DungeonRoot);
-            chosenRoomClone.gameObject.SetActive(false);
             chosenRoomClone.name = $"Room {addedRooms.Count}"; //  - {chosenRoom.name}"
             List<RoomDoor> tempDoors = new List<RoomDoor>(chosenRoomClone.Doors);
         _retryOtherDoor:
@@ -188,16 +193,17 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
             for (int i = 0; i < chosenRoomClone.Bounds.Length; i++)
             {
                 Collider2D toCheck = chosenRoomClone.Bounds[i];
-                List<Collider2D> hits = new List<Collider2D>();
 
                 ContactFilter2D filter = new ContactFilter2D();
                 filter.NoFilter();
+                filter.SetLayerMask(1 << 6);
 
-                toCheck.OverlapCollider(filter, hits);
-                hits = hits.Where(x => !chosenRoomClone.Bounds.Contains(x)).ToList();
-                if (hits.Count > 0)
+                hitBuffer.Clear();
+                toCheck.OverlapCollider(filter, hitBuffer);
+                if (hitBuffer.Count(x => !chosenRoomClone.Bounds.Contains(x)) > 0)
                 {
                     // Overlapping another room, try a different orientation.
+                    // TODO: This could be optimized by using an array, maybe.
                     tempDoors.Remove(otherDoor);
                     goto _retryOtherDoor;
                 }
@@ -222,7 +228,27 @@ public class DungeonGenerator : Singleton<DungeonGenerator>
         // Make all remaining unavailable doors disabled.
         foreach (RoomDoor door in unassignedDoors) door.Disabled = true;
 
+        if (addedRooms.Count < RoomCountRange.x && retries > 0)
+        {
+            // Too small, let's retry the whole thing.
+            Debug.Log($"Only generated {addedRooms.Count} rooms! Let's try that again...");
+            MakeDungeon(retries - 1);
+            return;
+        }
+
         // Dungeon completed, invoke callback.
         OnDungeonRegenerated.Invoke();
+
+        UpdateActiveRoom(startingRoom);
+    }
+
+    public void UpdateActiveRoom(RoomObject activeRoom)
+    {
+        GameObject obj = activeRoom.gameObject;
+        for (int i = 0; i < DungeonRoot.childCount; i++)
+        {
+            GameObject child = DungeonRoot.GetChild(i).gameObject;
+            child.SetActive(child == obj);
+        }
     }
 }

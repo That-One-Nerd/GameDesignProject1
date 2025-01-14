@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool Active;
+
+    [Header("Data")]
     public PlayerStats BaseStats;
     public PlayerInventory Inventory;
 
@@ -22,6 +25,8 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        Active = true;
+
         cam = FindObjectOfType<CameraController>();
         generator = FindObjectOfType<DungeonGenerator>();
         rb = GetComponent<Rigidbody2D>();
@@ -43,6 +48,12 @@ public class PlayerController : MonoBehaviour
 
     private void MovementTick()
     {
+        if (!Active)
+        {
+            rb.velocity = Vector2.zero;
+            return;
+        }
+
         Vector2 axis = new Vector2(Input.GetAxisRaw("Horizontal"),
                                    Input.GetAxisRaw("Vertical"));
         rb.velocity = Vector2.ClampMagnitude(axis, 1) * Speed;
