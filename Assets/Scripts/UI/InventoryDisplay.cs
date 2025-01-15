@@ -8,7 +8,7 @@ public class InventoryDisplay : MonoBehaviour
     private TextMeshProUGUI[] counters;
     private PlayerController player;
 
-    private RawImage background;
+    private Image background;
 
     private void Awake()
     {
@@ -22,7 +22,7 @@ public class InventoryDisplay : MonoBehaviour
             counters[i] = child.Find("Count Display").GetComponent<TextMeshProUGUI>();
         }
 
-        background = GetComponent<RawImage>();
+        background = GetComponent<Image>();
         player = FindObjectOfType<PlayerController>();
     }
 

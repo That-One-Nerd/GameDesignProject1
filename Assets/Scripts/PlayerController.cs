@@ -44,8 +44,6 @@ public class PlayerController : MonoBehaviour
 
         BaseStats.Reset();
         Inventory.Reset();
-
-        CurrentHealth = 300;
     }
 
     private void OnDungeonGenerated()
@@ -57,52 +55,8 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         MovementTick();
-        //OverhealTick();
+        OverhealTick();
         InventoryTick();
-
-        TempDeathTick();
-    }
-
-    private bool ready = false;
-    private void TempDeathTick()
-    {
-        if (Room != DungeonGenerator.Instance.DungeonStartingRoom) ready = true;
-        if (!ready) return;
-
-        if (CurrentHealth > 1)
-        {
-            while (overhealTimer < 0)
-            {
-                CurrentHealth--;
-                overhealTimer += Mathf.Max(0.002f * CurrentHealth, Time.deltaTime * 1.001f);
-            }
-            overhealTimer -= Time.deltaTime;
-        }
-        else
-        {
-            // Janky ahh code. It works for now though.
-            CurrentHealth = 0;
-            Active = false;
-            GetComponent<SpriteRenderer>().enabled = false;
-            FindObjectOfType<InventoryDisplay>()?.RefreshInventory();
-            Destroy(FindObjectOfType<InventoryDisplay>());
-            int count = (from slot in Inventory.ItemSlots select slot.Count).Sum();
-            GameObject.Find("Heads Up Display").transform.Find("Inventory").GetComponent<RawImage>().enabled = true;
-            GameObject.Find("Heads Up Display").transform.Find("Inventory").Find("Slots").gameObject.SetActive(true);
-            GameObject.Find("Heads Up Display").transform.Find("Finish Text").GetComponent<TextMeshProUGUI>().text =
-                $"You collected a total of {count} items!\n" +
-                 "Press [R] to retry or to challenge a friend!";
-            GameObject.Find("Heads Up Display").transform.Find("Finish Text").gameObject.SetActive(true);
-            overhealTimer = 1;
-
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                Destroy(GameObject.Find("Heads Up Display"));
-                Destroy(GameObject.Find("Dungeon Root"));
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-                return;
-            }
-        }
     }
 
     private void MovementTick()
@@ -127,13 +81,16 @@ public class PlayerController : MonoBehaviour
     }
     private void OverhealTick()
     {
+        int totalMaxHealth = BaseStats.MaxHealth * (1 + BaseStats.MaxOverheals);
+        if (CurrentHealth > totalMaxHealth) CurrentHealth = totalMaxHealth;
+
         if (CurrentHealth > BaseStats.MaxHealth)
         {
             while (overhealTimer < 0)
             {
                 CurrentHealth--;
                 FindObjectOfType<HealthBar>().DecreaseCurrentHealthBefore();
-                overhealTimer += 1 / (OverhealDegradation + OverhealAcceleration * (CurrentHealth - BaseStats.MaxHealth));
+                overhealTimer += 1 / (OverhealDegradation * BaseStats.MaxHealth + OverhealAcceleration * (CurrentHealth - BaseStats.MaxHealth));
             }
             overhealTimer -= Time.deltaTime;
         }
